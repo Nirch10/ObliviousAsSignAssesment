@@ -33,3 +33,5 @@ def names():
 if __name__ == '__main__':
     context = ('/Users/sapirchodorov/git_projects/crt/server.crt', '/Users/sapirchodorov/git_projects/crt/server.key')  # certificate and key files
     app.run(debug=True, ssl_context=context)
+
+
