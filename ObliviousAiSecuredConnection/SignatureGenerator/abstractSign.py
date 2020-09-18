@@ -44,25 +44,24 @@ class ClientSignatureCreator:
         :param c: c param from sign generator to compare the sender's signature with.
         """
         x = random(100)
-        z = ((y_tag - x - b)*c) % self.p
+        z = ((y_tag - x - b) * c) % self.p
         return z
 
 
 class ProxySignatureCreator:
     def __init__(self):
         self.p = 0
-        self.a = random(self.p)
-        self.b = random(self.p)
-        self.c = random(self.p)
+        # self.a = random(self.p)
+        # self.b = random(self.p)
+        # self.c = random(self.p)
 
-
-    def sign(self) -> int:
+    def sign(self, a: int, b: int, c: int, p: int) -> int:
         """
         Server's signature for the secured connection will be calculated by the formula : d = (a - b)*c % p.
         :rtype: int : z result of the signature formula
         """
-        self.a = random(self.p)
-        self.b = random(self.p)
-        self.c = random(self.p)
-        d = ((self.a - self.b)*self.c) % self.p;
+        a = random(p)
+        b = random(p)
+        c = random(p)
+        d = ((a - b) * c) % p
         return d
