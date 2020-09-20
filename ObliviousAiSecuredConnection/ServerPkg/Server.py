@@ -35,7 +35,7 @@ class Server(HttpsServer, ServerSignatureCreator):
     @staticmethod
     @app.route('/')
     def welcome() -> object:
-        return Response(jsonify({"Welcome to my server": 'ss'}), status=200, mimetype='application/json')
+        return Response(jsonify({"Welcome to my server": 'ss'}), status=200)
 
     def update_key(self, a: int, d: int) -> int:
         """
@@ -102,7 +102,8 @@ def test_connection():
     req_body = request.json
     status = server.test_connection(req_body['clientKey'])
     if status:
-        response = create_response({"ConnectionAccepted": True, "Message": "You are the chosen one! we are the same"}, 200)
+        response = create_response({"ConnectionAccepted": True, "Message": "You are the chosen one! we share the same "
+                                                                           "secret :) "}, 200)
     else:
         response = create_response({"ConnectionAccepted": False, "Message": "Sorry, you are not the chosen one, "
                                                                             "my secrets will not be shared with "

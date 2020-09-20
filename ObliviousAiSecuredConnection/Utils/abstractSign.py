@@ -28,7 +28,7 @@ class ServerSignatureCreator(SignatureCreator):
         :param d: d param from sign generator to compare the sender's signature with.
         """
         self.d = d
-        y_tag = (self.y + a) % self.p
+        y_tag = self.y + a % self.p
         return y_tag
 
 
