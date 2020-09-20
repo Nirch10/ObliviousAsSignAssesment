@@ -2,8 +2,11 @@
 Secret(Key) based connection between a client and a server using a 3rd party key generator
 
 #prerequisites
+
 *python 3 installed
+
 *python libraries needed (most of them are defaulty downloaded when python 3 is inatalled): 
+
 	[os, ssl, requests, json, flask, abc, random] 
 
 # How to use : 
