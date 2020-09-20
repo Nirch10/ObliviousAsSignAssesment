@@ -1,5 +1,5 @@
 import abc
-from random import random
+from random import randrange
 
 
 class SignatureCreator(metaclass=abc.ABCMeta):
@@ -12,6 +12,7 @@ class SignatureCreator(metaclass=abc.ABCMeta):
 class ServerSignatureCreator:
     def __init__(self):
         self.p = 0;
+        self.d = -1
 
     def set_p(self, p: int) -> None:
         self.p = p
@@ -23,7 +24,8 @@ class ServerSignatureCreator:
         :param a: a param from sign generator which will be used in the formula
         :param d: d param from sign generator to compare the sender's signature with.
         """
-        y = random(100);
+        y = randrange(0, self.p);
+        self.d = d
         y_tag = (y + a) % self.p
         return y_tag
 
@@ -43,7 +45,7 @@ class ClientSignatureCreator:
         :param b: b param from sign generator which will be used in the formula
         :param c: c param from sign generator to compare the sender's signature with.
         """
-        x = random(100)
+        x = randrange(0,100)
         z = ((y_tag - x - b) * c) % self.p
         return z
 
@@ -60,8 +62,8 @@ class ProxySignatureCreator:
         Server's signature for the secured connection will be calculated by the formula : d = (a - b)*c % p.
         :rtype: int : z result of the signature formula
         """
-        a = random(p)
-        b = random(p)
-        c = random(p)
+        a = randrange(0, p)
+        b = randrange(0, p)
+        c = randrange(0, p)
         d = ((a - b) * c) % p
         return d

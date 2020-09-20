@@ -1,26 +1,45 @@
+import abc
 import os
 from abc import ABC, abstractclassmethod, ABCMeta, abstractproperty
 
-import flask as Flask
+from flask import Flask, jsonify
 
 
 class AbstractServer(ABC):
-    __metaclass__ = ABCMeta
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self):
+        # self.app = None
+        self.server_ip = ''
+        self.server_port = 'None'
+
+    # @property
+    # def app(self):
+    #     return self._server_address
+    #
+    # @app.setter
+    # def app(self, val):
+    #     self._app = val
+
     @property
-    @abstractclassmethod
-    def asset_dir(cls):
-        os.path.dirname(os.path.abspath(__file__))
+    def server_ip(self):
+        return self._server_ip
 
-    def get_app(self):
-        return self.app
+    @server_ip.setter
+    def server_ip(self, ip: str):
+        self._server_ip = ip
 
-    def set_app(self, val):
+    @property
+    def server_port(self):
+        return self._server_port
+
+    @server_port.setter
+    def server_port(self, port: int):
+        self._server_port = port
+
+    @abc.abstractmethod
+    def serve(self):
         pass
-
-    @abstractclassmethod
-    def serve(cls):
-        pass;
-    app = abstractproperty(get_app, set_app)
 
 class AbstractClient(ABC):
     pass
