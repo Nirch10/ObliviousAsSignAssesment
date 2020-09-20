@@ -1,21 +1,10 @@
 import json
-from http.server import BaseHTTPRequestHandler
+
 from flask import Flask, jsonify, request, Response
-import ssl
 import os
 
-# class Server:
-#     context = ssl.create_default_context()
-#     server_address = ('localhost', 4443)
-#     httpd = http.server.HTTPServer(server_address, http.server.SimpleHTTPRequestHandler)
-#     httpd.socket = ssl.wrap_socket(httpd.socket,
-#                                    server_side=True,
-#                                    certfile='localhost.pem',
-#                                    ssl_version=ssl.PROTOCOL_TLS)
-#     httpd.serve_forever()
-#
-from .HttpsServer import HttpsServer
-from SignatureGenerator.abstractSign import ServerSignatureCreator
+from Utils.HttpsConnection import HttpsServer
+from Utils.abstractSign import ServerSignatureCreator
 
 ASSETS_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
@@ -30,12 +19,11 @@ def create_response(data, code: int, mimetype: str) -> app.response_class:
     return response
 
 
-class Server(ServerSignatureCreator, HttpsServer):
+class Server(HttpsServer, ServerSignatureCreator):
 
     def __init__(self, ip: str, port: int):
-        super(Server, self).__init__()
-        self.server_port = port
-        self.server_ip = ip
+        super(Server, self).__init__(ip, port)
+        ServerSignatureCreator.__init__(Server)
         self.y_tag = -1
 
     @staticmethod
@@ -54,30 +42,28 @@ class Server(ServerSignatureCreator, HttpsServer):
         return predicted_key == self.d
 
     def serve(self):
-        context = ('/Users/sapirchodorov/git_projects/crt/server.crt',
-                   '/Users/sapirchodorov/git_projects/crt/server.key')  # certificate and key files
-        app.run(host=self.server_ip, port=self.server_port, debug=True, ssl_context=context)
+        app.run(host=self.server_ip, port=self.server_port, debug=True, ssl_context=self.context)
 
 
 @app.route('/updateKey', methods=['POST'])
 def update_server_key():
     req_body = request.json
-    s.update_key(req_body['key_a'], req_body['key_d'])
+    server.update_key(req_body['key_a'], req_body['key_d'])
     response = create_response({"updated": True}, 200, 'application/json')
     return response
 
 
 @app.route('/getKey', methods=['GET'])
 def get_server_tag():
-    y_tag = s.get_key_tag()
-    response = create_response(y_tag, 200, 'application/json')
+    y_tag = server.get_key_tag()
+    response = create_response({'key': y_tag}, 200, 'application/json')
     return response
 
 
 @app.route('/testConnection', methods=['POST'])
 def test_connection():
     req_body = request.json
-    status = s.test_connection(req_body['clientKey'])
+    status = server.test_connection(req_body['clientKey'])
     if status:
         response = create_response({"ConnectionAccepted": True}, 200, 'application/json')
     else:
@@ -85,6 +71,7 @@ def test_connection():
     return response
 
 
-if __name__ == '__main__':
-    s = Server('127.0.0.1', 5000)
-    s.serve()
+def start_server():
+    global server
+    server = Server('127.0.0.1', 5000)
+    server.serve()
