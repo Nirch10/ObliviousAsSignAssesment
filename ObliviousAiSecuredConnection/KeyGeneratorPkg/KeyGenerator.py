@@ -36,9 +36,12 @@ class KeyGenerator(HttpsServer, HttpsClient, ProxySignatureCreator):
         def _init_json_req():
             return {"key_a": self.values_to_gen['a'], "key_d": self.values_to_gen['d']}
 
-        json_body = _init_json_req();
-        res = HttpsClient.post_request(KeyGenerator, '/updateKey', json_body)
-        return res.status_code
+        try:
+            json_body = _init_json_req();
+            res = HttpsClient.post_request(KeyGenerator, '/updateKey', json_body)
+            return res.status_code
+        except:
+            return 501
 
     def init_proxy(self):
         """
@@ -49,12 +52,17 @@ class KeyGenerator(HttpsServer, HttpsClient, ProxySignatureCreator):
         code = self._setup_server()
         if code == 200:
             self.serve()
+        else:
+            print("Error initializing server, Error code : " + str(code))
 
     def get_client_credentials(self) -> dict:
         return {'b': self.values_to_gen['b'], 'c': self.values_to_gen['c']}
 
     def serve(self):
-        app.run(host=self.server_ip, port=self.server_port, debug=True, ssl_context=self.context)
+        try:
+            app.run(host=self.server_ip, port=self.server_port, debug=True, ssl_context=self.context)
+        except:
+            print("server {"+self.server_ip+"} not running on port: " + str(self.server_port))
 
 
 @app.route('/getClientKey')

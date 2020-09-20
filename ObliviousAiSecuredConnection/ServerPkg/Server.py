@@ -44,8 +44,11 @@ class Server(HttpsServer, ServerSignatureCreator):
         :param d:
         :return: the public key generated
         """
-        self.y_tag = super(Server, self).sign(a, d)
-        return self.y_tag
+        if self.y_tag == -1:
+            self.y_tag = super(Server, self).sign(a, d)
+            return self.y_tag
+        else:
+            return -1
 
     def get_public_key(self) -> int:
         return self.y_tag
@@ -56,10 +59,15 @@ class Server(HttpsServer, ServerSignatureCreator):
         :param predicted_key:
         :return: true if they are equal, else false
         """
+        if self.d == -1 or self.y_tag == -1:
+            return False
         return predicted_key == self.d
 
     def serve(self):
-        app.run(host=self.server_ip, port=self.server_port, debug=True, ssl_context=self.context)
+        try:
+            app.run(host=self.server_ip, port=self.server_port, debug=True, ssl_context=self.context)
+        except:
+            print("server {"+self.server_ip+"} not running on port: " + str(self.server_port))
 
 
 @app.route('/updateKey', methods=['POST'])

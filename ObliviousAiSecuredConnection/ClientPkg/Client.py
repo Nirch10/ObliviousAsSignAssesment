@@ -6,7 +6,7 @@ from Utils.abstractSign import ClientSignatureCreator
 
 
 class Client(ClientSignatureCreator):
-    def __init__(self, p_value:int, key_g_ip: str, key_g_port: int, server_ip: str, server_port: str,
+    def __init__(self, p_value: int, key_g_ip: str, key_g_port: int, server_ip: str, server_port: str,
                  certificate_path: str):
         """
         :param key_g_ip: keyGenerator ip - to get clients b, c params for the calculations
@@ -28,35 +28,43 @@ class Client(ClientSignatureCreator):
         gets the parameters from the keyGenerator server, and stores them in self.b and self.c
         :param uri:
         """
-        response = self.key_generator_client.get_request(uri)
-        json_res = json.loads(response.content)
-        self.b = json_res['b']
-        self.c = json_res['c']
+        try:
+            response = self.key_generator_client.get_request(uri)
+            json_res = json.loads(response.content)
+            self.b = json_res['b']
+            self.c = json_res['c']
+        except:
+            print("Error occurred while making request to : " + uri)
 
     def init_server_public_key(self, uri: str) -> None:
         """
         Gets the server public key, and sotres it in self.y_tag
         :param uri:
         """
-        response = self.server_client.get_request(uri)
-        json_response = json.loads(response.content)
-        self.y_tag = json_response['key']
+        try:
+            response = self.server_client.get_request(uri)
+            json_response = json.loads(response.content)
+            self.y_tag = json_response['key']
+        except:
+            print("Error occurred while making request to : " + uri)
 
     def test_server_connection(self, uri: str) -> None:
         """
         Calculates client key, and try to connect to server, then print result to console
         :param uri:
         """
-        key = super(Client, self).sign(self.b, self.c, self.y_tag)
-        json_body = {"clientKey": key}
-        response = self.server_client.post_request(uri, json_body)
-        print(json.loads(response.content))
+        try:
+            key = super(Client, self).sign(self.b, self.c, self.y_tag)
+            json_body = {"clientKey": key}
+            response = self.server_client.post_request(uri, json_body)
+            print(json.loads(response.content))
+        except:
+            print("Error occurred while making request to : " + uri)
 
 
 def start_client(p_value: int, server_ip: str, server_port: int, generator_ip: str, generator_port: int,
-                 certificate_path:str):
+                 certificate_path: str):
     k = Client(p_value, generator_ip, generator_port, server_ip, server_port, certificate_path)
     k.init_server_public_key('/getKey')
     k.init_generator_key('/getClientKey')
     k.test_server_connection('/testConnection')
-
