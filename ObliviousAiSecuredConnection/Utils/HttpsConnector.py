@@ -1,3 +1,4 @@
+import os
 import ssl
 
 import requests
@@ -5,11 +6,19 @@ from requests import Response
 
 
 class HttpsServer:
-    def __init__(self, ip: str, port: int):
+    ASSETS_DIR = os.path.dirname(os.path.abspath(__file__))
+
+    def __init__(self, ip: str, port: int, cert_path: str, cert_key_path: str):
+        """
+
+        :param ip: ip of this HttpsServer to listen to
+        :param port: port on which this HttpsServer will listen to
+        :param cert_path: keyGenerator server valid certificate file path
+        :param cert_key_path: keyGenerator server valid certificate key file path
+        """
         self.server_ip = ip
         self.server_port = port
-        self.context = ('/Users/sapirchodorov/git_projects/crt/server.crt',
-                   '/Users/sapirchodorov/git_projects/crt/server.key')  # certificate and key files
+        self.context = (cert_path, cert_key_path)  # certificate and key files
 
     def serve(self):
         pass;
@@ -18,7 +27,7 @@ class HttpsServer:
 class HttpsClient:
     ssl._create_default_https_context = ssl._create_unverified_context
 
-    def __init__(self, server_ip: str, server_port: int, cert_path:str):
+    def __init__(self, server_ip: str, server_port: int, cert_path: str):
         self.server_address = ''.join(['https://', server_ip, ':', str(server_port)])
         self.certificate = cert_path
 

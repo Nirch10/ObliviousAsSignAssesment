@@ -1,8 +1,6 @@
 import abc
 from random import randrange
 
-p = 11
-
 
 class SignatureCreator(metaclass=abc.ABCMeta):
     @classmethod
@@ -11,13 +9,13 @@ class SignatureCreator(metaclass=abc.ABCMeta):
                 callable(subclass.sign))
 
     @classmethod
-    def set_p(cls):
+    def set_p(cls, p):
         cls.p = p
 
 
 class ServerSignatureCreator(SignatureCreator):
-    def __init__(self):
-        super().set_p();
+    def __init__(self, p: int):
+        super().set_p(p)
         print(self.p)
         self.d = -1;
         self.y = randrange(0, self.p);
@@ -35,8 +33,8 @@ class ServerSignatureCreator(SignatureCreator):
 
 
 class ClientSignatureCreator(SignatureCreator):
-    def __init__(self):
-        super().set_p();
+    def __init__(self, p: int):
+        super().set_p(p);
         self.x = randrange(0, 100)
 
     def sign(self, b: int, c: int, y_tag: int) -> int:
@@ -52,8 +50,8 @@ class ClientSignatureCreator(SignatureCreator):
 
 
 class ProxySignatureCreator(SignatureCreator):
-    def __init__(self):
-        super().set_p();
+    def __init__(self, p: int):
+        super().set_p(p);
 
     def sign(self) -> int:
         """

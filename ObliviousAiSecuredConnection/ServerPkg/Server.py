@@ -1,12 +1,11 @@
 import json
 
 from flask import Flask, jsonify, request, Response
-import os
 
 from Utils.HttpsConnector import HttpsServer
 from Utils.abstractSign import ServerSignatureCreator
 
-ASSETS_DIR = os.path.dirname(os.path.abspath(__file__))
+
 app = Flask(__name__)
 
 
@@ -21,9 +20,9 @@ def create_response(data, code: int, mimetype: str) -> app.response_class:
 
 class Server(HttpsServer, ServerSignatureCreator):
 
-    def __init__(self, ip: str, port: int):
-        super(Server, self).__init__(ip, port)
-        ServerSignatureCreator.__init__(Server)
+    def __init__(self, p_value: int, ip: str, port: int, certificate_path: str, certificate_key_path: str):
+        super(Server, self).__init__(ip, port,certificate_path, certificate_key_path)
+        ServerSignatureCreator.__init__(Server, p_value)
         self.y_tag = -1
 
     @staticmethod
@@ -71,7 +70,10 @@ def test_connection():
     return response
 
 
-def start_server():
+def start_server(p_value: int, ip: str, port: int, certificate_path: str, certificate_key_path: str) -> None:
+    """
+    Start serving https server for algorithm check.
+    """
     global server
-    server = Server('127.0.0.1', 5000)
+    server = Server(p_value, ip, port, certificate_path, certificate_key_path)
     server.serve()

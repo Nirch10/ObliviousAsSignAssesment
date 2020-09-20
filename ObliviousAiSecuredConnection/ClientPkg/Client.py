@@ -6,7 +6,7 @@ from Utils.abstractSign import ClientSignatureCreator
 
 
 class Client(ClientSignatureCreator):
-    def __init__(self, key_g_ip: str, key_g_port: int, server_ip: str, server_port: str,
+    def __init__(self, p_value:int, key_g_ip: str, key_g_port: int, server_ip: str, server_port: str,
                  certificate_path: str):
         """
         :param key_g_ip: keyGenerator ip - to get clients b, c params for the calculations
@@ -17,7 +17,7 @@ class Client(ClientSignatureCreator):
         """
         self.key_generator_client = HttpsClient(key_g_ip, key_g_port, certificate_path)
         self.server_client = HttpsClient(server_ip, server_port, certificate_path)
-        super(Client, self).__init__()
+        super(Client, self).__init__(p_value)
         self.y_tag = -1;
         self.x = randrange(0, self.p)
         self.b = -1;
@@ -45,8 +45,9 @@ class Client(ClientSignatureCreator):
         print(json.loads(response.content))
 
 
-def start_client():
-    k = Client('localhost', 5051, 'localhost', 5000, '/Users/sapirchodorov/git_projects/crt/rootCA.pem')
+def start_client(p_value: int, server_ip: str, server_port: int, generator_ip: str, generator_port: int,
+                 certificate_path:str):
+    k = Client(p_value, generator_ip, generator_port, server_ip, server_port, certificate_path)
     k.init_server_public_key('/getKey')
     k.init_generator_key('/getClientKey')
     k.test_server_connection('/testConnection')
