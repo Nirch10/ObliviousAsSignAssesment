@@ -24,6 +24,6 @@ class HttpsClient:
         return res
 
     def post_request(self, uri: str, json_data: str):
-        url = ''.join([self.server_address, self, uri])
+        url = ''.join([self.server_address, uri])
         res = requests.post(url, json=json_data, verify=self.certificate)
         return res

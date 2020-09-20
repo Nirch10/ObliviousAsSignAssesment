@@ -2,7 +2,7 @@ import os
 import requests
 from flask import Flask
 from ServerPkg.Server import create_response
-from Utils.HttpsConnection import HttpsServer
+from Utils.HttpsConnection import HttpsServer, HttpsClient
 from Utils.abstractSign import ProxySignatureCreator
 import ssl
 
@@ -11,9 +11,10 @@ ASSETS_DIR = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
 
 
-class KeyGenerator(HttpsServer, ProxySignatureCreator):
-    def __init__(self, ip: str, port: int):
+class KeyGenerator(HttpsServer, HttpsClient, ProxySignatureCreator):
+    def __init__(self, ip: str, port: int, server_ip: str, server_port:int):
         super(KeyGenerator, self).__init__(ip, port)
+        HttpsClient.__init__(KeyGenerator, server_ip, server_port, '/Users/sapirchodorov/git_projects/crt/rootCA.pem')
         ProxySignatureCreator.__init__(KeyGenerator)
         self.values_to_gen = super(KeyGenerator, self).sign()
         self.server_port = port
@@ -31,8 +32,9 @@ class KeyGenerator(HttpsServer, ProxySignatureCreator):
             return {"key_a": self.values_to_gen['a'], "key_d": self.values_to_gen['d']}
 
         json_body = _init_json_req();
-        url = ''.join(['https://', server_ip, ':', server_port, '/updateKey'])
-        res = requests.post(url, json=json_body, verify='/Users/sapirchodorov/git_projects/crt/rootCA.pem')
+        # url = ''.join(['https://', server_ip, ':', server_port, '/updateKey'])
+        # res = requests.post(url, json=json_body, verify='/Users/sapirchodorov/git_projects/crt/rootCA.pem')
+        res = HttpsClient.post_request(KeyGenerator, '/updateKey', json_body)
         return res.status_code
 
     def init_proxy(self, server_ip: str, server_port: str):
@@ -66,5 +68,5 @@ def welcome():
 
 def start_generator():
     global key_generator
-    key_generator = KeyGenerator('127.0.0.1', 5051)
+    key_generator = KeyGenerator('127.0.0.1', 5051,'localhost', 5000)
     key_generator.init_proxy('localhost', '5000');
