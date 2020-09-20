@@ -1,10 +1,7 @@
-import os
-import requests
 from flask import Flask
 from ServerPkg.Server import create_response
 from Utils.HttpsConnector import HttpsServer, HttpsClient
 from Utils.abstractSign import ProxySignatureCreator
-import ssl
 
 app = Flask(__name__)
 

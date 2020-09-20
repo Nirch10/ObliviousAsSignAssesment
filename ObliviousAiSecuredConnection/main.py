@@ -1,8 +1,10 @@
+import os
+
 from Config import Config
 
 
 def get_config_path() -> str:
-    return '/Users/sapirchodorov/git_projects/ObliviousAsSignAssesment/ObliviousAiSecuredConnection/Config.json';
+    return os.path.realpath('../Config.json')
 
 
 if __name__ == '__main__':
