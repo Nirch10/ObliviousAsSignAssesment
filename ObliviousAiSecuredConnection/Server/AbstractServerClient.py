@@ -1,8 +1,9 @@
 import abc
+import json
 import os
 from abc import ABC, abstractclassmethod, ABCMeta, abstractproperty
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, app
 
 
 class AbstractServer(ABC):
@@ -41,5 +42,7 @@ class AbstractServer(ABC):
     def serve(self):
         pass
 
+
 class AbstractClient(ABC):
     pass
+
