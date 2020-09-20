@@ -32,11 +32,23 @@ class HttpsClient:
         self.certificate = cert_path
 
     def get_request(self, uri: str = '/', json_data: str = '') -> Response:
+        """
+        performing get_request to self.server_address
+        :param uri:
+        :param json_data: request's body as json
+        :return: Response type , representing the request's response.
+        """
         url = ''.join([self.server_address, uri])
         res = requests.get(url, json=json_data, verify=self.certificate)
         return res
 
     def post_request(self, uri: str, json_data: str):
+        """
+        performing post_request to self.server_address
+        :param uri:
+        :param json_data: request's body as json
+        :return: Response type , representing the request's response.
+        """
         url = ''.join([self.server_address, uri])
         res = requests.post(url, json=json_data, verify=self.certificate)
         return res
