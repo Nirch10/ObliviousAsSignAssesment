@@ -24,22 +24,30 @@ class Client(ClientSignatureCreator):
         self.c = -1;
 
     def init_generator_key(self, uri: str) -> None:
+        """
+        gets the parameters from the keyGenerator server, and stores them in self.b and self.c
+        :param uri:
+        """
         response = self.key_generator_client.get_request(uri)
         json_res = json.loads(response.content)
         self.b = json_res['b']
         self.c = json_res['c']
-        print(self.b)
-        print(self.c)
 
     def init_server_public_key(self, uri: str) -> None:
+        """
+        Gets the server public key, and sotres it in self.y_tag
+        :param uri:
+        """
         response = self.server_client.get_request(uri)
         json_response = json.loads(response.content)
         self.y_tag = json_response['key']
-        print(self.y_tag)
 
     def test_server_connection(self, uri: str) -> None:
+        """
+        Calculates client key, and try to connect to server, then print result to console
+        :param uri:
+        """
         key = super(Client, self).sign(self.b, self.c, self.y_tag)
-        print(key)
         json_body = {"clientKey": key}
         response = self.server_client.post_request(uri, json_body)
         print(json.loads(response.content))

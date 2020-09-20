@@ -59,6 +59,10 @@ class KeyGenerator(HttpsServer, HttpsClient, ProxySignatureCreator):
 
 @app.route('/getClientKey')
 def get_client_key():
+    """
+    gets the needed parameters for the client
+    :return:
+    """
     res = key_generator.get_client_credentials()
     response = create_response(res, 200, 'application/json')
     return response
@@ -70,7 +74,18 @@ def welcome():
 
 
 def start_generator(p_value:int, server_ip: str, server_port: int, ip: str, port: int, client_cert_path: str,
-                    server_cert_path: str, server_cert_key_path: str):
+                    server_cert_path: str, server_cert_key_path: str) -> None:
+    """
+    Start serving https server and client for algorithm calculations and initializations .
+    :param p_value: the p value for the formula
+    :param server_ip: server's ip to connect to
+    :param server_port:
+    :param ip: ip to listen on for client's request
+    :param port:
+    :param client_cert_path:
+    :param server_cert_path:
+    :param server_cert_key_path:
+    """
     global key_generator
     key_generator = KeyGenerator(p_value, ip, port, server_ip, server_port, client_cert_path, server_cert_path
                                  , server_cert_key_path)
