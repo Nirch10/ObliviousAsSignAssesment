@@ -4,10 +4,11 @@
 2.Certificate - there is a chance, with the way the certificate is stored and passed to the server on it's creation, that the certificat will be damaged or dangerous and not a real certificate.
 
 3.Same key used - The server in this solution uses the same key generated on the first time for each client that makes a request - this means that a stolen key can be used from diferent clients as long as the server is up and running.
+
 4.key generator as a breaking point - since the key generator has all the parameters, in case where hackers breach our keygenerator server, they posses all the information they need in order to break our secured connection
 
 
-How to improve our security here :
+#How to improve our security here :
 
 1.Ddos attack - limit number of request per minute + ban repeated request from some ip for x time period.
                 own a list of "untrusted servers", for which our server will not accept any test_connection request for a period of time.
