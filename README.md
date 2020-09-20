@@ -16,6 +16,7 @@ Second, Configure your Config.json file as needed :
 
 Now after we set our certificate correctly - its time for some magic :)
 There are 4 steps in order to make sure the program is working :
+
 *Step 1 :NOT A MUST STEP in the main.py file -> set the Config.json path inside get_config_path() to your local path of Config.json
 		the default config.json file will be located in the main folder.
 
