@@ -1,4 +1,4 @@
-# ObliviousAsSignAssesment
+# ObliviousAI - Coding Assessment
 Secret(Key) based connection between a client and a server using a 3rd party key generator
 
 #prerequisites
