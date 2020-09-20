@@ -1,4 +1,5 @@
 #Description of my work
+
 From what I understood, my mission was to create a triple program files - one to act as Https Server (Receiver according to the pdf), one as Https Client (Sender acc to the pdf) and one to generate paramteres for keys calculations in the first two .
 
 I was not sure what the meaning of X and Y in the server's and the client's formulas, I assumed they were private ints which initialized on the creation of each object - based on the fact that each of them will be a randomized  number between (0, p-1) where p is a prime number.
