@@ -1,54 +1,52 @@
 import json
-import ssl
 from random import randrange
 
-import requests
-
-from Utils.HttpsConnection import HttpsClient
+from Utils.HttpsConnector import HttpsClient
 from Utils.abstractSign import ClientSignatureCreator
 
-ssl._create_default_https_context = ssl._create_unverified_context
 
-
-class Client(HttpsClient, ClientSignatureCreator):
-    def __init__(self, key_generator_ip_port, server_ip_port):
-
-        # super(Client, self).__init__('localhost',5000)
+class Client(ClientSignatureCreator):
+    def __init__(self, key_g_ip: str, key_g_port: int, server_ip: str, server_port: str,
+                 certificate_path: str):
+        """
+        :param key_g_ip: keyGenerator ip - to get clients b, c params for the calculations
+        :param key_g_port: port on which @param key_g_ip listens to
+        :param server_ip: servers ip the client will try and make connection after calculation
+        :param server_port: port on which @param server_ip listens to
+        :param certificate_path: certificate file path to verify on each request
+        """
+        self.key_generator_client = HttpsClient(key_g_ip, key_g_port, certificate_path)
+        self.server_client = HttpsClient(server_ip, server_port, certificate_path)
         super(Client, self).__init__()
-        self.key_generator_url = ''.join(['https://',key_generator_ip_port])
-        self.server_url = ''.join(['https://',server_ip_port])
         self.y_tag = -1;
-        self.x = randrange(0,self.p)
+        self.x = randrange(0, self.p)
         self.b = -1;
         self.c = -1;
 
     def init_generator_key(self, uri: str) -> None:
-        # url = ''.join([self.key_generator_url, uri])
-        # res = requests.get(url, verify='/Users/sapirchodorov/git_projects/crt/rootCA.pem')
-        # json_res = json.loads(res.content)
-        json_res = json.loads()
+        response = self.key_generator_client.get_request(uri)
+        json_res = json.loads(response.content)
         self.b = json_res['b']
         self.c = json_res['c']
         print(self.b)
         print(self.c)
 
-    def init_server_public_key(self, uri:str) -> None:
-        url = ''.join([self.server_url, uri])
-        res = requests.get(url, verify='/Users/sapirchodorov/git_projects/crt/rootCA.pem')
-        self.y_tag = json.loads(res.content)['key']
+    def init_server_public_key(self, uri: str) -> None:
+        response = self.server_client.get_request(uri)
+        json_response = json.loads(response.content)
+        self.y_tag = json_response['key']
         print(self.y_tag)
 
     def test_server_connection(self, uri: str) -> None:
         key = super(Client, self).sign(self.b, self.c, self.y_tag)
         print(key)
         json_body = {"clientKey": key}
-        url = ''.join([self.server_url, uri])
-        res = requests.post(url, json=json_body, verify='/Users/sapirchodorov/git_projects/crt/rootCA.pem')
-        print(json.loads(res.content))
+        response = self.server_client.post_request(uri, json_body)
+        print(json.loads(response.content))
 
 
 def start_client():
-    k = Client('localhost:5051', 'localhost:5000')
+    k = Client('localhost', 5051, 'localhost', 5000, '/Users/sapirchodorov/git_projects/crt/rootCA.pem')
     k.init_server_public_key('/getKey')
     k.init_generator_key('/getClientKey')
     k.test_server_connection('/testConnection')

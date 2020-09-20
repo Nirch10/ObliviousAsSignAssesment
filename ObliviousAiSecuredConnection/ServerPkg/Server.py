@@ -3,7 +3,7 @@ import json
 from flask import Flask, jsonify, request, Response
 import os
 
-from Utils.HttpsConnection import HttpsServer
+from Utils.HttpsConnector import HttpsServer
 from Utils.abstractSign import ServerSignatureCreator
 
 ASSETS_DIR = os.path.dirname(os.path.abspath(__file__))

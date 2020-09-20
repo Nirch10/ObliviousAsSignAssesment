@@ -1,3 +1,5 @@
+import ssl
+
 import requests
 from requests import Response
 
@@ -14,12 +16,14 @@ class HttpsServer:
 
 
 class HttpsClient:
+    ssl._create_default_https_context = ssl._create_unverified_context
+
     def __init__(self, server_ip: str, server_port: int, cert_path:str):
         self.server_address = ''.join(['https://', server_ip, ':', str(server_port)])
         self.certificate = cert_path
 
     def get_request(self, uri: str = '/', json_data: str = '') -> Response:
-        url = ''.join([self.server_address, self, uri])
+        url = ''.join([self.server_address, uri])
         res = requests.get(url, json=json_data, verify=self.certificate)
         return res
 
