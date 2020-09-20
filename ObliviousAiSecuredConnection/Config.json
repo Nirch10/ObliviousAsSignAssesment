@@ -1,0 +1,17 @@
+{
+  "ServerConfig": {
+    "Ip": "localhost",
+    "Port": 1235
+  },
+  "ClientConfig": {},
+  "KeyGeneratorConfig": {
+    "ServingIp": "localhost",
+    "ServingPort": 2020
+  },
+  "GlobalConfig": {
+    "CertificatePath": "/Users/sapirchodorov/git_projects/crt/rootCA.pem",
+    "ServerCertificatePath": "/Users/sapirchodorov/git_projects/crt/server.crt",
+    "ServerCertificateKeyPath": "/Users/sapirchodorov/git_projects/crt/server.key",
+    "pValue": 11
+  }
+}
