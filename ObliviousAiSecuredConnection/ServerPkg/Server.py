@@ -103,7 +103,7 @@ def test_connection():
     status = server.test_connection(req_body['clientKey'])
     if status:
         response = create_response({"ConnectionAccepted": True, "Message": "You are the chosen one! we share the same "
-                                                                           "secret :)"}, 200)
+                                                                           "secret :) "}, 200)
     else:
         response = create_response({"ConnectionAccepted": False, "Message": "Sorry, you are not the chosen one, "
                                                                             "my secrets will not be shared with "
